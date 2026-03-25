@@ -41,4 +41,13 @@ class LoginUser extends FormRequest
 			'password.max' => 'La contraseña debe tener menos de 255 caracteres.',
 		];
 	}
+
+	public function attributes(): array
+	{
+		return [
+			'email' => 'correo electrónico',
+			'user' => 'usuario',
+			'password' => 'contraseña',
+		];
+	}
 }
