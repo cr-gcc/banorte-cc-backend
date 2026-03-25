@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Campaigns\CampaignController;
+use App\Http\Controllers\Api\Statuses\StatusController;
 
 Route::get('/version', [AuthController::class, 'version']);
 Route::prefix('auth')->group(function () {
@@ -20,5 +21,9 @@ Route::middleware('auth:sanctum')->group(function () {
 		Route::get('/', [CampaignController::class, 'index']);
 		Route::post('/', [CampaignController::class, 'store']);
 		Route::put('/{campaign}', [CampaignController::class, 'update']);
+	});
+	// STATUSES
+	Route::prefix('statuses')->group(function () {
+		Route::get('/', [StatusController::class, 'index']);
 	});
 });
