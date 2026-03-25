@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\LoginUser;
+use App\Http\Resources\Auth\LoginResource;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -92,12 +93,12 @@ class AuthController extends Controller
 				return response()->json(['message' => 'Credenciales inválidas'], 401);
 			}
 		}
+		//	Obtiene el usuario y creación de token
 		$user = Auth::user();
 		$token = $user->createToken('auth_token_bnt_cc')->plainTextToken;
 		return response()->json([
-			'user' => $user,
-			'access_token' => $token,
-			'token_type' => 'Bearer',
+			'user' => new LoginResource($user),
+			'access_token' => $token
 		]);
 	}
 
