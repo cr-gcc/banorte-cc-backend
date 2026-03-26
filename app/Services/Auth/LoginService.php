@@ -17,10 +17,18 @@ class LoginService
 
 	public function execute($request)
 	{
-		$credentials = ['email' => $request->input('email'), 'password' => $request->input('password')];
+		$email = $request->input('email');
+		$password = $request->input('password');
+		$credentials = [
+			'email' => $email,
+			'password' => $password
+		];
 		if (!Auth::attempt($credentials)) {
 			// Si falla, intentar con el campo 'user' (RFC)
-			$credentials = ['user' => $request->input('email'), 'password' => $request->input('password')];
+			$credentials = [
+				'user' => $email,
+				'password' => $password
+			];
 			if (!Auth::attempt($credentials)) {
 				return response()->json(['message' => 'Credenciales inválidas'], 401);
 			}
@@ -40,7 +48,6 @@ class LoginService
 			false,
 			'Lax'
 		);
-
 		return response()->json(['user' => new LoginResource($user)])->cookie($cookie);
 	}
 }

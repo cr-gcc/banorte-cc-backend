@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Auth\ChangePasswordRequest;
@@ -114,9 +115,9 @@ class AuthController extends Controller
 	 *     )
 	 * )
 	 */
-	public function resetPassword(ResetPasswordRequest $request, ResetPasswordService $service)
+	public function resetPassword(User $user, ResetPasswordService $service)
 	{
-		return $service->execute($request);
+		return $service->execute($user->id);
 	}
 
 	/**
@@ -141,9 +142,9 @@ class AuthController extends Controller
 	 *     )
 	 * )
 	 */
-	public function changePassword(ChangePasswordRequest $request, ChangePasswordService $service)
+	public function changePassword(User $user, ChangePasswordRequest $request, ChangePasswordService $service)
 	{
-		return $service->execute($request);
+		return $service->execute($user->id, $request);
 	}
 
 	/**
