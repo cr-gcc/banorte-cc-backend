@@ -3,15 +3,10 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Http\Requests\Auth\ResetPasswordRequest;
-use App\Http\Requests\Auth\ChangePasswordRequest;
 use App\Services\Auth\MeService;
 use App\Services\Auth\LoginService;
 use App\Services\Auth\LogoutService;
-use App\Services\Auth\ResetPasswordService;
-use App\Services\Auth\ChangePasswordService;
 
 class AuthController extends Controller
 {
@@ -91,60 +86,6 @@ class AuthController extends Controller
 	public function login(LoginRequest $request, LoginService $service)
 	{
 		return $service->execute($request);
-	}
-
-	/**
-	 * @OA\Post(
-	 *     path="/api/auth/reset-password",
-	 *     summary="Reinicia la contraseña",
-	 *     tags={"Auth"},
-	 *     @OA\RequestBody(
-	 *         required=true,
-	 *         @OA\JsonContent(
-	 *             required={"email", "password"},
-	 *             @OA\Property(property="email", type="string", example="[EMAIL_ADDRESS]"),
-	 *             @OA\Property(property="password", type="string", example="password")
-	 *         )
-	 *     ),
-	 *     @OA\Response(
-	 *         response=200,
-	 *         description="Contraseña reiniciada correctamente",
-	 *         @OA\JsonContent(
-	 *             @OA\Property(property="message", type="string", example="Contraseña reiniciada correctamente")
-	 *         )
-	 *     )
-	 * )
-	 */
-	public function resetPassword(User $user, ResetPasswordService $service)
-	{
-		return $service->execute($user->id);
-	}
-
-	/**
-	 * @OA\Post(
-	 *     path="/api/auth/change-password",
-	 *     summary="Cambia la contraseña",
-	 *     tags={"Auth"},
-	 *     @OA\RequestBody(
-	 *         required=true,
-	 *         @OA\JsonContent(
-	 *             required={"email", "password"},
-	 *             @OA\Property(property="email", type="string", example="[EMAIL_ADDRESS]"),
-	 *             @OA\Property(property="password", type="string", example="password")
-	 *         )
-	 *     ),
-	 *     @OA\Response(
-	 *         response=200,
-	 *         description="Contraseña cambiada correctamente",
-	 *         @OA\JsonContent(
-	 *             @OA\Property(property="message", type="string", example="Contraseña cambiada correctamente")
-	 *         )
-	 *     )
-	 * )
-	 */
-	public function changePassword(User $user, ChangePasswordRequest $request, ChangePasswordService $service)
-	{
-		return $service->execute($user->id, $request);
 	}
 
 	/**

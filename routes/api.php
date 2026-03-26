@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Campaigns\CampaignController;
 use App\Http\Controllers\Api\Statuses\StatusController;
 use App\Http\Controllers\Api\Users\UserController;
+use App\Http\Controllers\Api\Users\UserPasswordController;
 
 Route::get('/version', [AuthController::class, 'version']);
 Route::prefix('auth')->group(function () {
@@ -16,14 +17,14 @@ Route::middleware('auth:sanctum')->group(function () {
 	Route::prefix('auth')->group(function () {
 		Route::get('/me', [AuthController::class, 'me']);
 		Route::get('/logout', [AuthController::class, 'logout']);
-		Route::post('/{user}/reset-password', [AuthController::class, 'resetPassword']);
-		Route::post('/{user}/change-password', [AuthController::class, 'changePassword']);
 	});
 	// USERS
 	Route::prefix('users')->group(function () {
 		Route::get('/', [UserController::class, 'index']);
 		Route::post('/', [UserController::class, 'store']);
 		Route::put('/{user}', [UserController::class, 'update']);
+		Route::post('/{user}/reset-password', [UserPasswordController::class, 'resetPassword']);
+		Route::post('/{user}/change-password', [UserPasswordController::class, 'changePassword']);
 	});
 	// CAMPAIGNS
 	Route::prefix('campaigns')->group(function () {

@@ -1,15 +1,12 @@
 <?php
 
-namespace App\Services\Auth;
+namespace App\Services\Users;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class ChangePasswordService
 {
-	/**
-	 * Create a new class instance.
-	 */
 	public function __construct()
 	{
 		//
