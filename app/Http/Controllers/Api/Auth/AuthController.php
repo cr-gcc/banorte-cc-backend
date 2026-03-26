@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\User\LoginUser;
+use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Resources\Auth\LoginResource;
 use Illuminate\Support\Facades\Auth;
 
@@ -80,7 +80,7 @@ class AuthController extends Controller
 	 *     )
 	 * )
 	 */
-	public function login(LoginUser $request)
+	public function login(LoginRequest $request)
 	{
 		$identifier = $request->input('email');
 		$password = $request->input('password');
@@ -99,6 +99,38 @@ class AuthController extends Controller
 		return response()->json([
 			'user' => new LoginResource($user),
 			'access_token' => $token
+		]);
+	}
+
+	/**
+	 * @OA\Post(
+	 *     path="/api/auth/reset-password",
+	 *     summary="Reinicia la contraseña",
+	 *     tags={"Auth"},
+	 *     @OA\RequestBody(
+	 *         required=true,
+	 *         @OA\JsonContent(
+	 *             required={"email", "password"},
+	 *             @OA\Property(property="email", type="string", example="[EMAIL_ADDRESS]"),
+	 *             @OA\Property(property="password", type="string", example="password")
+	 *         )
+	 *     ),
+	 *     @OA\Response(
+	 *         response=200,
+	 *         description="Contraseña reiniciada correctamente",
+	 *         @OA\JsonContent(
+	 *             @OA\Property(property="message", type="string", example="Contraseña reiniciada correctamente")
+	 *         )
+	 *     )
+	 * )
+	 */
+	public function resetPassword(RessetPasswordRequest $request)
+	{
+		$user = Auth::user();
+		$user->password = bcrypt($request->input('password'));
+		$user->save();
+		return response()->json([
+			'message' => 'Contraseña reiniciada correctamente',
 		]);
 	}
 
