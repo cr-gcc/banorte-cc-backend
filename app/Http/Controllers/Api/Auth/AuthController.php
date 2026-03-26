@@ -4,11 +4,19 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Http\Resources\Auth\LoginResource;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Auth\ResetPasswordRequest;
+use App\Http\Requests\Auth\ChangePasswordRequest;
+use App\Services\Auth\MeService;
+use App\Services\Auth\LoginService;
+use App\Services\Auth\LogoutService;
+use App\Services\Auth\ResetPasswordService;
+use App\Services\Auth\ChangePasswordService;
 
 class AuthController extends Controller
 {
+
+	public function __construct() {}
+
 	/**
 	 * @OA\Get(
 	 *     path="/api/version",
@@ -51,10 +59,9 @@ class AuthController extends Controller
 	 *     )
 	 * )
 	 */
-	public function me()
+	public function me(MeService $service)
 	{
-		$user = Auth::user();
-		return response()->json($user);
+		return $service->execute();
 	}
 
 	/**
@@ -80,26 +87,9 @@ class AuthController extends Controller
 	 *     )
 	 * )
 	 */
-	public function login(LoginRequest $request)
+	public function login(LoginRequest $request, LoginService $service)
 	{
-		$identifier = $request->input('email');
-		$password = $request->input('password');
-		//	Primer intento de login con email
-		$credentials = ['email' => $identifier, 'password' => $password];
-		if (!Auth::attempt($credentials)) {
-			// Si falla, intentar con el campo 'user' (RFC)
-			$credentials = ['user' => $identifier, 'password' => $password];
-			if (!Auth::attempt($credentials)) {
-				return response()->json(['message' => 'Credenciales inválidas'], 401);
-			}
-		}
-		//	Obtiene el usuario y creación de token
-		$user = Auth::user();
-		$token = $user->createToken('auth_token_bnt_cc')->plainTextToken;
-		return response()->json([
-			'user' => new LoginResource($user),
-			'access_token' => $token
-		]);
+		return $service->execute($request);
 	}
 
 	/**
@@ -124,14 +114,36 @@ class AuthController extends Controller
 	 *     )
 	 * )
 	 */
-	public function resetPassword(RessetPasswordRequest $request)
+	public function resetPassword(ResetPasswordRequest $request, ResetPasswordService $service)
 	{
-		$user = Auth::user();
-		$user->password = bcrypt($request->input('password'));
-		$user->save();
-		return response()->json([
-			'message' => 'Contraseña reiniciada correctamente',
-		]);
+		return $service->execute($request);
+	}
+
+	/**
+	 * @OA\Post(
+	 *     path="/api/auth/change-password",
+	 *     summary="Cambia la contraseña",
+	 *     tags={"Auth"},
+	 *     @OA\RequestBody(
+	 *         required=true,
+	 *         @OA\JsonContent(
+	 *             required={"email", "password"},
+	 *             @OA\Property(property="email", type="string", example="[EMAIL_ADDRESS]"),
+	 *             @OA\Property(property="password", type="string", example="password")
+	 *         )
+	 *     ),
+	 *     @OA\Response(
+	 *         response=200,
+	 *         description="Contraseña cambiada correctamente",
+	 *         @OA\JsonContent(
+	 *             @OA\Property(property="message", type="string", example="Contraseña cambiada correctamente")
+	 *         )
+	 *     )
+	 * )
+	 */
+	public function changePassword(ChangePasswordRequest $request, ChangePasswordService $service)
+	{
+		return $service->execute($request);
 	}
 
 	/**
@@ -149,11 +161,8 @@ class AuthController extends Controller
 	 *     )
 	 * )
 	 */
-	public function logout()
+	public function logout(LogoutService $service)
 	{
-		Auth::user()->currentAccessToken()->delete();
-		return response()->json([
-			'message' => 'Sesión cerrada correctamente',
-		]);
+		return $service->execute();
 	}
 }
