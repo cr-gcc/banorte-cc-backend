@@ -17,6 +17,7 @@ class LoginResource extends JsonResource
 		$roles = $this->roles->map(fn($role) => [
 			'id'   => $role->id,
 			'name' => $role->name,
+			'role_type' => $role->role_type
 		])->values();
 
 		$permissions = $this->getAllPermissions()
